@@ -1,4 +1,4 @@
-# 🛡️ SWEEPER FORTRESS v3.0.0-ENTERPRISE
+# 🛡️ SWEEPER
 
 ## The Ultimate Development Environment Security & Cleanup Tool
 
@@ -790,7 +790,7 @@ MIT License - Open Source Excellence
 
 ---
 
-## 🚀 **WHAT'S NEW IN v3.0.0-ENTERPRISE**
+## 🚀 **WHAT'S NEW?**
 
 ### **🔥 Major Enhancements**
 
