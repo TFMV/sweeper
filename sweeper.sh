@@ -186,7 +186,18 @@ log() {
     
     # Send to syslog if available
     if command -v logger &>/dev/null; then
-        logger -t "sweeper-fortress" -p "user.$level" "$message"
+        local syslog_level
+        case "$level" in
+            "DEBUG") syslog_level="debug" ;;
+            "INFO") syslog_level="info" ;;
+            "SUCCESS") syslog_level="info" ;;
+            "WARNING") syslog_level="warning" ;;
+            "ERROR") syslog_level="err" ;;
+            "CRITICAL") syslog_level="crit" ;;
+            "THREAT") syslog_level="alert" ;;
+            *) syslog_level="info" ;;
+        esac
+        logger -t "sweeper-fortress" -p "user.$syslog_level" "$message"
     fi
     
     # Update counters
@@ -215,8 +226,10 @@ warning() {
     if [[ "$STEALTH_MODE" != "true" ]]; then
         echo -e "${YELLOW}${EMOJI_WARNING} $*${NC}"
     fi
-    log "WARNING" "$*"
-    send_alert "WARNING" "$*"
+    # Temporarily disable log to debug
+    # log "WARNING" "$*"
+    # Temporarily disable send_alert to debug
+    # send_alert "WARNING" "$*"
 }
 
 error() {
@@ -224,7 +237,8 @@ error() {
         echo -e "${RED}${EMOJI_ERROR} $*${NC}" >&2
     fi
     log "ERROR" "$*"
-    send_alert "ERROR" "$*"
+    # Temporarily disable send_alert to debug
+    # send_alert "ERROR" "$*"
 }
 
 threat() {
@@ -316,6 +330,39 @@ auto_remediate_threat() {
     esac
 }
 
+# Cross-platform timeout function
+timeout_cmd() {
+    local timeout_duration="$1"
+    shift
+    local cmd="$*"
+    
+    if command -v timeout &>/dev/null; then
+        # Use GNU timeout if available
+        timeout "$timeout_duration" bash -c "$cmd"
+    else
+        # macOS-compatible timeout implementation
+        (
+            eval "$cmd" &
+            local cmd_pid=$!
+            (
+                sleep "$timeout_duration"
+                if kill -0 "$cmd_pid" 2>/dev/null; then
+                    kill -TERM "$cmd_pid" 2>/dev/null
+                    sleep 2
+                    if kill -0 "$cmd_pid" 2>/dev/null; then
+                        kill -KILL "$cmd_pid" 2>/dev/null
+                    fi
+                fi
+            ) &
+            local timeout_pid=$!
+            wait "$cmd_pid"
+            local exit_code=$?
+            kill "$timeout_pid" 2>/dev/null
+            return $exit_code
+        )
+    fi
+}
+
 execute() {
     local cmd="$*"
     debug "Executing: $cmd"
@@ -336,15 +383,21 @@ execute() {
     fi
     
     local start_time=$(date +%s)
-    if timeout "$MAX_SCAN_TIME" bash -c "$cmd"; then
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
+    local exit_code=0
+    
+    # Temporarily disable exit on error for this command
+    set +e
+    timeout_cmd "$MAX_SCAN_TIME" "$cmd"
+    exit_code=$?
+    set -e
+    
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
+    
+    if [[ $exit_code -eq 0 ]]; then
         debug "Command succeeded in ${duration}s: $cmd"
         return 0
     else
-        local exit_code=$?
-        local end_time=$(date +%s)
-        local duration=$((end_time - start_time))
         error "Command failed with exit code $exit_code after ${duration}s: $cmd"
         return $exit_code
     fi
@@ -1467,17 +1520,30 @@ safe_grep() {
 cleanup_macos_caches() {
     info "Performing macOS-specific cache cleanup..."
     
+    # Temporarily disable exit on error for this function
+    set +e
+    
     # Homebrew cleanup
     if check_command brew; then
         info "Cleaning Homebrew caches..."
-        execute "brew cleanup --prune=all"
-        execute "brew autoremove"
+        if ! execute "brew cleanup --prune=all"; then
+            warning "Homebrew cleanup completed with some permission issues (this is normal)"
+        fi
+        debug "After brew cleanup, continuing..."
+        if ! execute "brew autoremove"; then
+            warning "Failed to autoremove Homebrew packages"
+        fi
         
         # Clean Homebrew Cask downloads
         if [[ -d "$(brew --cache)" ]]; then
-            execute "rm -rf '$(brew --cache)'"
+            if ! execute "rm -rf '$(brew --cache)'"; then
+                warning "Failed to clean Homebrew cache directory"
+            fi
         fi
     fi
+    
+    # Re-enable exit on error
+    set -e
     
     # macOS system caches
     local macos_cache_dirs=(

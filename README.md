@@ -729,8 +729,8 @@ We welcome contributions from security professionals and developers worldwide!
 ### **Development Setup**
 
 ```bash
-git clone https://github.com/your-org/sweeper-fortress.git
-cd sweeper-fortress
+git clone https://github.com/TFMV/sweeper.git
+cd sweeper
 chmod +x sweeper.sh
 ./sweeper.sh --level=basic --dry-run --verbose
 ```
@@ -769,102 +769,4 @@ EOF
 
 ## 📜 **LICENSE**
 
-MIT License - Open Source Excellence
-
----
-
-## 🏆 **AWARDS & RECOGNITION**
-
-- **🥇 Best Security Tool 2024** - DevSecOps Awards
-- **🛡️ Enterprise Security Choice** - InfoSec Magazine
-- **🚀 Innovation in Automation** - Security Automation Summit
-
----
-
-## 📞 **SUPPORT & COMMUNITY**
-
-- **Documentation**: [https://sweeper-fortress.dev/docs](https://sweeper-fortress.dev/docs)
-- **Community Forum**: [https://community.sweeper-fortress.dev](https://community.sweeper-fortress.dev)
-- **Security Issues**: <security@sweeper-fortress.dev>
-- **Enterprise Support**: <enterprise@sweeper-fortress.dev>
-
----
-
-## 🚀 **WHAT'S NEW?**
-
-### **🔥 Major Enhancements**
-
-✅ **27 new security audit functions**  
-✅ **15 additional package managers supported**  
-✅ **Nuclear cleanup level** for maximum security  
-✅ **Prometheus metrics export** for monitoring  
-✅ **Self-update mechanism** with integrity verification  
-✅ **Plugin system** for extensibility  
-✅ **Enhanced compliance reporting** (SOC2, ISO27001, NIST)  
-✅ **Advanced notification system** (Webhook, Slack, Email)  
-✅ **Filesystem bloat analysis** and optimization  
-✅ **Database engine cleanup** support  
-
-### **🛡️ Security Improvements**
-
-✅ **Firmware/BIOS verification** (Linux)  
-✅ **Process ancestry analysis** with threat detection  
-✅ **Login audit system** with brute-force detection  
-✅ **Lynis integration** with scoring and enforcement  
-✅ **Orphaned systemd services** detection  
-✅ **Temporary account auditing** for security hygiene  
-✅ **Enhanced cryptocurrency mining** detection  
-✅ **Bash version compatibility** checking  
-
-### **🔧 Operational Excellence**
-
-✅ **100% backward compatibility** maintained  
-✅ **Zero breaking changes** from previous versions  
-✅ **Enterprise-grade error handling** and logging  
-✅ **Cross-platform optimization** and testing  
-✅ **Production-ready deployment** capabilities  
-
----
-
-**🛡️ Sweeper Fortress - Where Security Meets Excellence**
-
-*"In a world of cyber threats, be the fortress."*
-
----
-
-## 📊 **QUICK REFERENCE**
-
-### **Essential Commands**
-
-```bash
-# Basic usage
-./sweeper.sh                                    # Standard cleanup
-./sweeper.sh --level=deep                       # Deep security audit
-./sweeper.sh --level=nuclear                    # Maximum cleanup + security
-./sweeper.sh --dry-run --verbose                # Preview all actions
-
-# Enterprise features
-./sweeper.sh --self-update                      # Update to latest version
-./sweeper.sh --bloat-report                     # Filesystem analysis
-./sweeper.sh --export-metrics=/tmp/metrics.prom # Export monitoring data
-
-# Production deployment
-./sweeper.sh --level=deep --no-confirm --stealth \
-  --webhook=https://alerts.company.com \
-  --export-metrics=/var/lib/prometheus/sweeper.prom
-```
-
-### **Configuration Quick Start**
-
-```bash
-# Create configuration file
-cat > sweeper.conf << 'EOF'
-CLEANUP_LEVEL="deep"
-PARANOID_MODE=true
-WEBHOOK_URL="https://your-webhook.com"
-EXPORT_METRICS="/var/lib/prometheus/sweeper.prom"
-EOF
-
-# Run with configuration
-./sweeper.sh --config=sweeper.conf
-```
+MIT
